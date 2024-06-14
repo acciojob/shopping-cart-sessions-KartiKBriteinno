@@ -1,5 +1,3 @@
-// This is the boilerplate code given for you
-// You can modify this code
 // Product data
 const products = [
   { id: 1, name: "Product 1", price: 10 },
@@ -27,9 +25,9 @@ function renderProducts() {
 function renderCart() {
   cartList.innerHTML = '';
   const cart = getCart();
-  cart.forEach((item) => {
+  cart.forEach((item, index) => {
     const li = document.createElement("li");
-    li.innerHTML = `${item.name} - $${item.price} <button class="remove-from-cart-btn" data-id="${item.id}">Remove</button>`;
+    li.innerHTML = `${item.name} - $${item.price} <button class="remove-from-cart-btn" data-index="${index}">Remove</button>`;
     cartList.appendChild(li);
   });
 }
@@ -43,15 +41,17 @@ function getCart() {
 function addToCart(productId) {
   const cart = getCart();
   const product = products.find(p => p.id === productId);
-  cart.push(product);
-  sessionStorage.setItem('cart', JSON.stringify(cart));
-  renderCart();
+  if (product) {
+    cart.push(product);
+    sessionStorage.setItem('cart', JSON.stringify(cart));
+    renderCart();
+  }
 }
 
 // Remove item from cart
-function removeFromCart(productId) {
+function removeFromCart(index) {
   let cart = getCart();
-  cart = cart.filter(item => item.id !== productId);
+  cart.splice(index, 1);
   sessionStorage.setItem('cart', JSON.stringify(cart));
   renderCart();
 }
@@ -72,8 +72,8 @@ document.addEventListener('click', function(event) {
     const productId = parseInt(event.target.dataset.id, 10);
     addToCart(productId);
   } else if (event.target.classList.contains('remove-from-cart-btn')) {
-    const productId = parseInt(event.target.dataset.id, 10);
-    removeFromCart(productId);
+    const index = parseInt(event.target.dataset.index, 10);
+    removeFromCart(index);
   }
 });
 
